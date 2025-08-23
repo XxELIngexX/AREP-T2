@@ -15,7 +15,7 @@ function loadPostOptions() {
 
     const nameEncoded = encodeURIComponent(nameValue);
 
-    fetch("/options?name=" + nameEncoded, {
+    fetch(`/hello?name=${nameEncoded}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: nameValue })
