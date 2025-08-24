@@ -22,6 +22,7 @@ public class WebApplication {
         });
 
 
+        
         get("/hello", (req, resp) -> "Hello " + req.getValue("name"));
         get("/pi", (req, resp) -> {
             return String.valueOf(Math.PI);

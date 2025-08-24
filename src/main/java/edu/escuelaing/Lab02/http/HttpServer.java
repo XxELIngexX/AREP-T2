@@ -1,12 +1,18 @@
 package edu.escuelaing.Lab02.http;
 
 import edu.escuelaing.Lab02.service.Service;
+import edu.escuelaing.Lab02.service.UserService;
+import edu.escuelaing.Lab02.util.JsonUtil;
+import edu.escuelaing.Lab02.model.User;
 
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.jws.soap.SOAPBinding.Use;
+
 import java.io.*;
 
 public class HttpServer {
@@ -95,23 +101,24 @@ public class HttpServer {
         }
 
         // Procesar petición POST
-        if ("POST".equalsIgnoreCase(method) && path.startsWith("/options")) {
+        if ("POST".equalsIgnoreCase(method)) {
+
             if (contentLengthStr != null) {
                 int contentLength = Integer.parseInt(contentLengthStr);
                 char[] body = new char[contentLength];
                 in.read(body, 0, contentLength);
                 String bodyContent = new String(body);
                 System.out.println("POST body-in: " + bodyContent);
-            }
 
-            OutputStream rawOut = clientSocket.getOutputStream();
-            String response = "HTTP/1.1 200 OK\r\n" +
-                    "Content-Type: text/plain\r\n" +
-                    "Content-Length: 2\r\n" +
-                    "\r\n" +
-                    "OK";
-            rawOut.write(response.getBytes(StandardCharsets.UTF_8));
-            rawOut.flush();
+                HttpResponse res = new HttpResponse();
+                res.setStatus(200, "OK");
+                res.setContentType("application/json");
+                res.setBody(bodyContent);
+
+                OutputStream rawOut = clientSocket.getOutputStream();
+                rawOut.write(res.buildResponse().getBytes(StandardCharsets.UTF_8));
+                rawOut.flush();
+            }
 
         } else {
             // Procesar petición GET
@@ -198,7 +205,7 @@ public class HttpServer {
     }
 
     public static void staticFiles(String path) {
-        if (path != "/" ){
+        if (path != "/") {
             localPath = path;
             System.out.println("Archivos estáticos servirán desde: " + localPath);
         }
