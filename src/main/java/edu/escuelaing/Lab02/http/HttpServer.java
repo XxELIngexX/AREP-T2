@@ -98,7 +98,7 @@ public class HttpServer {
                 rawOut.flush();
                 return;
             }
-            if (request.getPath().equals("/getUser")) {
+            if (request.getPath().equals("/adduser")) {
                 String response = invokeService(request);
                 OutputStream rawOut = clientSocket.getOutputStream();
                 rawOut.write(response.getBytes(StandardCharsets.UTF_8));
