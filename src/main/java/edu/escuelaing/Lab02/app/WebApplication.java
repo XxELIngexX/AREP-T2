@@ -3,8 +3,10 @@ package edu.escuelaing.Lab02.app;
 import static edu.escuelaing.Lab02.http.HttpServer.get;
 import static edu.escuelaing.Lab02.http.HttpServer.staticFiles;
 
-import edu.escuelaing.Lab02.service.DishService;
-import edu.escuelaing.Lab02.service.UserService;
+import java.util.ArrayList;
+
+import edu.escuelaing.Lab02.model.*;
+import edu.escuelaing.Lab02.service.*;
 import edu.escuelaing.Lab02.util.JsonUtil;
 
 import static edu.escuelaing.Lab02.http.HttpServer.start;
@@ -21,11 +23,21 @@ public class WebApplication {
             return JsonUtil.toJson(dishService.getDishes());
         });
 
-
-        get("/hello", (req, resp) -> "Hello " + req.getValue("name"));
-        get("/pi", (req, resp) -> {
-            return String.valueOf(Math.PI);
+        get("/adduser", (req, resp) -> { 
+            
+            String userName = req.getValue("name");
+            userService.addUser(new User(userName));
+            System.out.println("@@@@@@@@@@");
+            return ("usuario "+ userName + " Creado");
         });
+        get("/getUser", (req,resp) ->{
+            User currentUser = userService.getUserByName(req.getValue("name"));
+            return JsonUtil.toJson(currentUser);
+        });
+
+        
+        get("/hello", (req, resp) -> "Hello " + req.getValue("name"));
+
         start(args);
     }
 }
