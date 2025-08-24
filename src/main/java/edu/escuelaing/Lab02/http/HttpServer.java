@@ -98,6 +98,13 @@ public class HttpServer {
                 rawOut.flush();
                 return;
             }
+            if (request.getPath().equals("/getUser")) {
+                String response = invokeService(request);
+                OutputStream rawOut = clientSocket.getOutputStream();
+                rawOut.write(response.getBytes(StandardCharsets.UTF_8));
+                rawOut.flush();
+                return;
+            }
         }
 
         // Procesar petición POST
@@ -108,7 +115,10 @@ public class HttpServer {
                 char[] body = new char[contentLength];
                 in.read(body, 0, contentLength);
                 String bodyContent = new String(body);
-                System.out.println("POST body-in: " + bodyContent);
+                String name = (bodyContent.toString().split(":")[1]).substring(1, (bodyContent.toString().split(":")[1]).length() - 2);
+                URI fakeUri = URI.create("/adduser?name=" + name);
+                String responseBody = invokeService(fakeUri);
+                System.out.println("RESPUESTA DEL ADDUSER: " + responseBody);
 
                 HttpResponse res = new HttpResponse();
                 res.setStatus(200, "OK");
